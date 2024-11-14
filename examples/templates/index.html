@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>KDOne Control Panel</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>KDOne Control Panel</h1>
+        <form id="control-form">
+            <label for="username">Username:</label>
+            <input type="text" id="username" name="username" required>
+
+            <label for="password">Password:</label>
+            <input type="password" id="password" name="password" required>
+
+            <label for="complex_id">Complex ID:</label>
+            <input type="text" id="complex_id" name="complex_id" required>
+
+            <label for="certify_number">Certification Code:</label>
+            <input type="text" id="certify_number" name="certify_number">
+
+            <div class="button-group">
+                <button type="button" onclick="performAction('login')">Login</button>
+                <button type="button" onclick="performAction('certify')">Certify</button>
+                <button type="button" onclick="performAction('get_devices')">Get Devices</button>
+                <button type="button" onclick="performAction('call_elevator')">Call Elevator</button>
+                <button type="button" onclick="clearConsole()">Clear Console</button>
+            </div>
+        </form>
+
+        <div class="console" id="console">
+            <h2>Console</h2>
+            <div id="console-output"></div>
+        </div>
+    </div>
+
+    <script>
+        async function performAction(action) {
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const complex_id = document.getElementById('complex_id').value;
+            const certify_number = document.getElementById('certify_number').value;
+
+            let url, payload;
+
+            if (action === 'login') {
+                url = "/login";
+                payload = { username, password, complex_id };
+            } else if (action === 'certify') {
+                url = "/certify";
+                payload = { certify_number };
+            } else if (action === 'get_devices') {
+                url = "/devices";
+                payload = null;
+            } else if (action === 'call_elevator') {
+                url = "/call-elevator";
+                payload = null;
+            }
+
+            try {
+                const response = await fetch(url, {
+                    method: payload ? 'POST' : 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: payload ? JSON.stringify(payload) : null,
+                });
+                const result = await response.json();
+                document.getElementById('console-output').innerText += `\n> ${result.message}`;
+            } catch (error) {
+                document.getElementById('console-output').innerText += `\n> Error: ${error.message}`;
+            }
+        }
+
+        function clearConsole() {
+            document.getElementById('console-output').innerText = "";
+        }
+    </script>
+</body>
+</html>
