@@ -15,7 +15,6 @@ kd_one = KDOneAPI(username='username', password='password')
 kd_one.get_complexes()
 
 kd_one.login(complex_id='12341234')
-kd_one.get_certification_code()
 # 로그인과 함께 월패드에 인증 코드가 전송된다
 
 certify_number = input('인증번호를 입력하세요: ')

@@ -5,7 +5,7 @@ with open("requirements.txt", encoding="UTF8") as f:
 
 setup(
     name="KDOne",
-    version="1.0.0",
+    version="1.1.0",
     author="Soul Lee",
     author_email="alus20x@gmail.com",
     description="KDOne Navien Home Network API Wrapper",

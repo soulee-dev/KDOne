@@ -9,7 +9,7 @@ from typing import Optional, List, Dict, Any
 class KDOneAPI:
     BASE_URL: str = "https://ilps.naviensmartcontrol.com:3000"
 
-    def __init__(self, username: str, password: str, base_url: str = BASE_URL) -> None:
+    def __init__(self, username: str, password: str, base_url: str = BASE_URL, verbose=True) -> None:
         self.username: str = username
         self.password: str = password
         self.complex_id: Optional[str] = None
@@ -17,12 +17,15 @@ class KDOneAPI:
         self.app_certify: Optional[str] = None
         self.access_token: Optional[str] = None
         self.refresh_token: Optional[str] = None
+        self.verbose = verbose
 
     def _send_request(self, endpoint: str, data: Dict[str, Any]) -> Dict[str, Any]:
         request_key: str = random_key()
         payload: str = encrypt_payload(request_key, json.dumps(data))
 
-        print(payload)
+        if self.verbose:
+            print(f"Sending request to {endpoint} with payload: {payload} and key: {request_key}")
+
         headers: Dict[str, str] = {
             "Content-Type": "text/plain",
             "User-Agent": "homenet/10 CFNetwork/1568.200.51 Darwin/24.1.0",
@@ -32,20 +35,28 @@ class KDOneAPI:
             f"{self.base_url}{endpoint}", headers=headers, data=payload
         )
 
+        if self.verbose:
+            print(f"Received response: {response.text}")
         if response.status_code == 200:
-            response_key: Optional[str] = response.headers.get("x-message-id")
-            decrypted_data: str = decrypt_payload(response_key, response.text)
-            response_data: Dict[str, Any] = json.loads(decrypted_data)
+            try:
+                response_key: Optional[str] = response.headers.get("x-message-id")
+                decrypted_data: str = decrypt_payload(response_key, response.text)
 
-            error_code: str = response_data.get("Error_Cd", "")
-            error_name: str = response_data.get("Error_Nm", "")
+                if self.verbose:
+                    print(f"Decrypted response: {decrypted_data}")
+                response_data: Dict[str, Any] = json.loads(decrypted_data)
 
-            if error_code != "0000" or error_name != "성공":
-                raise ValueError(f"Error {error_code}: {error_name}")
+                error_code: str = response_data.get("Error_Cd", "")
+                error_name: str = response_data.get("Error_Nm", "")
 
-            return response_data
+                if error_code != "0000" or error_name != "성공":
+                    raise ValueError(f"Error {error_code}: {error_name}")
+            except Exception as e:
+                raise ValueError(f"An error occurred during decryption: {e}")
         else:
             response.raise_for_status()
+
+        return response_data
 
     @staticmethod
     def get_complexes() -> List[Complex]:
@@ -74,9 +85,16 @@ class KDOneAPI:
             "User_Pw": self.password,
             "App_Type": "1",
         }
-        return self._send_request("/users/login2", data)
+        try:
+            response_data = self._send_request("/users/login2", data)
+            return response_data
+        except requests.exceptions.HTTPError as http_error:
+            if http_error.response.status_code == 404:
+                self._get_certification_code()
+            else:
+                raise
 
-    def get_certification_code(self) -> Dict[str, Any]:
+    def _get_certification_code(self) -> Dict[str, Any]:
         if not self.complex_id:
             raise ValueError(
                 "Complex ID not set. Call login() first or pass complex_id."
@@ -96,7 +114,7 @@ class KDOneAPI:
             "Complex": self.complex_id,
             "Certify_Number": certify_number,
         }
-        response_data = self._send_request("/users/certify", data)
+        response_data = self._send_request("/users/certification", data)
 
         # Save the App_Certify value after certification
         self.app_certify = certify_number

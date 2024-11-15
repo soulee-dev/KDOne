@@ -33,7 +33,6 @@ async def login(request: LoginRequest):
     global kd_one
     kd_one = KDOneAPI(username=request.username, password=request.password)
     kd_one.login(request.complex_id)
-    kd_one.get_certification_code()
     return JSONResponse(
         {"message": "Login successful. Please enter the certification code."}
     )
