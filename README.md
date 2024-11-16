@@ -1,7 +1,11 @@
 # KDOne Navien Home Network API Wrapper
 경동원 나비엔 홈네트워크 API Wrapper
 
+[![Watch the video](https://img.youtube.com/vi/7ZODlnFtiy4/0.jpg)](https://www.youtube.com/watch?v=7ZODlnFtiy4)
+Python 라이브러리를 사용해서 엘리베이터 호출 - YouTube
+
 ## 예제
+
 ```shell
 pip install KDOne
 ```
@@ -21,12 +25,12 @@ certify_number = input('인증번호를 입력하세요: ')
 kd_one.certify(certify_number=certify_number)
 kd_one.get_token()
 
-# 로그인 후에는 아래와 같이 사용할 수 있다
+# 토큰 발급 이후에는 아래와 같이 사용할 수 있다
 from KDOne.models.device import DeviceType
 
 devices = kd_one.get_devices(DeviceType.LIGHT)
 kd_one.control_device(devices[0], status="On")
-kd_one.control_device(devices[0], status="On")
+kd_one.control_device(devices[0], status="Off")
 
 # 엘리베이터 호출
 kd_one.call_elevator()
