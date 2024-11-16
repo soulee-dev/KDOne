@@ -1,7 +1,12 @@
 # KDOne Navien Home Network API Wrapper
+![PyPI - Version](https://img.shields.io/pypi/v/KDOne)
+[![Publish Python Package to PyPI](https://github.com/soulee-dev/KDOne/actions/workflows/publish-to-pypi.yml/badge.svg)](https://github.com/soulee-dev/KDOne/actions/workflows/publish-to-pypi.yml)
+
+
 경동원 나비엔 홈네트워크 API Wrapper
 
 [![Watch the video](https://img.youtube.com/vi/7ZODlnFtiy4/0.jpg)](https://www.youtube.com/watch?v=7ZODlnFtiy4)
+
 Python 라이브러리를 사용해서 엘리베이터 호출 - YouTube
 
 ## 예제
