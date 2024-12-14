@@ -5,7 +5,9 @@
 
 경동원 나비엔 홈네트워크 API Wrapper
 
-[![Watch the video](https://img.youtube.com/vi/7ZODlnFtiy4/0.jpg)](https://www.youtube.com/watch?v=7ZODlnFtiy4)
+https://github.com/user-attachments/assets/1b1550fb-e668-44c6-809b-49a7230c4f74
+
+
 
 Python 라이브러리를 사용해서 엘리베이터 호출 - YouTube
 
